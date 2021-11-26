@@ -34,7 +34,7 @@ int main(void) {
     }
 
     for(int j=0; j<10; j++){
-        int i = j * P
+        int i = j * P;
         printf("copying indexes %d to %d", i, i+P);
         HANDLE_ERROR(cudaMemcpyAsync(devA + i, a + i, P * sizeof(int), cudaMemcpyHostToDevice, stream[j]));
         HANDLE_ERROR(cudaMemcpyAsync(devB + i, b + i, P * sizeof(int), cudaMemcpyHostToDevice, stream[j]));
@@ -43,7 +43,7 @@ int main(void) {
     }
 
     for(int i=0; i<10; i++){
-        cudaStreamSynchronize(stream[j]);
+        cudaStreamSynchronize(stream[i]);
     }
 	
 	//check if ok
@@ -62,7 +62,7 @@ int main(void) {
 
 
     for(int i=0; i<10; i++){
-        cudaStreamDestroy(stream + i);
+        cudaStreamDestroy(stream[i]);
     }
 	return 0;
 }
