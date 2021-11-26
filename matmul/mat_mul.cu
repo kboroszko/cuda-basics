@@ -26,9 +26,9 @@ int main(void) {
     }
 
 	HANDLE_ERROR(cudaMemcpy(devA, a, N * sizeof(int), cudaMemcpyHostToDevice));
-	HANDLE_ERRORcudaMemcpy(devB, b, N * sizeof(int), cudaMemcpyHostToDevice));
+	HANDLE_ERROR(cudaMemcpy(devB, b, N * sizeof(int), cudaMemcpyHostToDevice));
 	add<<<(N+255)/256,256>>>(devA, devB, devC);
-	HANDLE_ERRORcudaMemcpy(c, devC, N * sizeof(int), cudaMemcpyDeviceToHost));
+	HANDLE_ERROR(cudaMemcpy(c, devC, N * sizeof(int), cudaMemcpyDeviceToHost));
 
 
 	//check if ok
