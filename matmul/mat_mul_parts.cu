@@ -2,7 +2,7 @@
 #include "common/errors.h"
 
 #define N 10000
-#define P = 1000
+#define P 1000
 
 __global__ void add(int *a, int *b, int *c) {
     int bid = blockIdx.x;
