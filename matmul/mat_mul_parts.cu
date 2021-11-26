@@ -29,10 +29,11 @@ int main(void) {
     }
 
     for(int i=0; i<N; i+=P){
+        printf("copying indexes %d to %d", i, i+P);
         HANDLE_ERROR(cudaMemcpy(devA + i, a + i, P * sizeof(int), cudaMemcpyHostToDevice));
         HANDLE_ERROR(cudaMemcpy(devB + i, b + i, P * sizeof(int), cudaMemcpyHostToDevice));
-        add<<<(P+255)/256,256>>>(devA, devB, devC);
-        HANDLE_ERROR(cudaMemcpy(c, devC + i, P * sizeof(int), cudaMemcpyDeviceToHost));
+        add<<<(P+255)/256,256>>>(devA+i, devB +i, devC + i);
+        HANDLE_ERROR(cudaMemcpy(c+i, devC + i, P * sizeof(int), cudaMemcpyDeviceToHost));
     }
 
 	
