@@ -39,8 +39,8 @@ int main(void) {
         }
     }
 
-	HANDLE_ERRORcudaFree(devA));
-	HANDLE_ERRORcudaFree(devB));
-	HANDLE_ERRORcudaFree(devC));
+	HANDLE_ERROR(cudaFree(devA));
+	HANDLE_ERROR(cudaFree(devB));
+	HANDLE_ERROR(cudaFree(devC));
 	return 0;
 }
