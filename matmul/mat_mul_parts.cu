@@ -16,9 +16,10 @@ __global__ void add(int *a, int *b, int *c) {
 
 int main(void) {
 
-    cudaStream_t stream;
-    cudaStreamCreate(&stream);
-
+    cudaStream_t stream[10];
+    for(int i=0; i<10; i++){
+        cudaStreamCreate(stream + i);
+    }
 	int a[N], b[N], c[N];
 	int *devA, *devB, *devC;
 
@@ -32,15 +33,18 @@ int main(void) {
         b[i] = i*2;
     }
 
-    for(int i=0; i<N; i+=P){
+    for(int j=0; j<10; j++){
+        int i = j * P
         printf("copying indexes %d to %d", i, i+P);
-        HANDLE_ERROR(cudaMemcpyAsync(devA + i, a + i, P * sizeof(int), cudaMemcpyHostToDevice, stream));
-        HANDLE_ERROR(cudaMemcpyAsync(devB + i, b + i, P * sizeof(int), cudaMemcpyHostToDevice, stream));
-        add<<<(P+255)/256,256, 0, stream>>>(devA+i, devB +i, devC + i);
-        HANDLE_ERROR(cudaMemcpyAsync(c+i, devC + i, P * sizeof(int), cudaMemcpyDeviceToHost,stream));
+        HANDLE_ERROR(cudaMemcpyAsync(devA + i, a + i, P * sizeof(int), cudaMemcpyHostToDevice, stream[j]));
+        HANDLE_ERROR(cudaMemcpyAsync(devB + i, b + i, P * sizeof(int), cudaMemcpyHostToDevice, stream[j]));
+        add<<<(P+255)/256,256, 0, stream[j]>>>(devA+i, devB +i, devC + i);
+        HANDLE_ERROR(cudaMemcpyAsync(c+i, devC + i, P * sizeof(int), cudaMemcpyDeviceToHost,stream[j]));
     }
 
-    cudaStreamSynchronize(stream);
+    for(int i=0; i<10; i++){
+        cudaStreamSynchronize(stream[j]);
+    }
 	
 	//check if ok
     for(int i=0; i<N; i++){
@@ -57,6 +61,8 @@ int main(void) {
 	HANDLE_ERROR(cudaFree(devC));
 
 
-    cudaStreamDestroy(stream);
+    for(int i=0; i<10; i++){
+        cudaStreamDestroy(stream + i);
+    }
 	return 0;
 }
