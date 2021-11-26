@@ -1,13 +1,15 @@
 #include <stdio.h>
 #include "common/errors.h"
 
-#define N 1000
+#define N 10000
 
 __global__ void add(int *a, int *b, int *c) {
     int bid = blockIdx.x;
 	int tid = bid * 256 + threadIdx.x;
 	if (tid < N) {
-		c[tid] = a[tid] + b[tid];
+        for(int i=0; i<100; i++){
+            c[tid] = a[tid] + b[tid];
+        }
     }
 }
 
@@ -34,10 +36,12 @@ int main(void) {
 	//check if ok
     for(int i=0; i<N; i++){
         if(c[i] != a[i] + b[i]){
-            printf("error at cell %d, %d != %d", i, c[i], a[i]+b[i]);
+            printf("error at cell %d, %d != %d\n", i, c[i], a[i]+b[i]);
             return 1;
         }
     }
+
+    printf("success\n");
 
 	HANDLE_ERROR(cudaFree(devA));
 	HANDLE_ERROR(cudaFree(devB));
